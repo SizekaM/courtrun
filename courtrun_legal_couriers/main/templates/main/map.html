@@ -1,0 +1,258 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block content %}
+
+
+<section class="py-5 mt-5">
+  <div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 col-xl-6 text-center mx-auto">
+            <h2 class="display-6 fw-bold mb-4"><span class="underline">Trip Details</span>.</h2>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6">
+            <div></div>
+        </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="map-container" style="margin-top: -100px; height: 75%; width: 100%;">
+  <div id="map-route"></div>
+</div>
+<br>
+
+<div class="container" style="margin-top: -150px;">
+  <table>
+    <tbody>
+
+      <tr>
+        <td>Duration:  </td>
+        <td>{{directions.duration}}</td>      
+      </tr>
+      <tr>
+        <td>Distance:  </td>
+        <td>{{directions.distance}} </td>      
+      </tr>
+      <tr>
+      <tr>
+        <td>Directions:  </td>
+        <td id="dir-toggle"><a href="javascript:void(0)" onclick="DirectionsToggle()"> CLICK HERE FOR DIRECTIONS</a></td>      
+      </tr>
+
+    </tbody>
+  </table>
+
+  <table id="dir-table" hidden>
+    <thead>
+      <tr>
+        <th>Directions</th>
+        <th>Distance</th>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for leg in directions.route %}
+          <tr>
+          <td>Leg {{ forloop.counter }}</td>
+          <td></td>
+          <td></td>  
+        </tr>
+        {% for dist, dur, text in leg.steps %}
+        <tr>
+          <td>{{text|safe}}</td>
+          <td>{{dist}}</td>
+          <td>{{dur}}</td>   
+        </tr>
+        {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+
+<section class="py-5 mt-5">
+  <div class="container py-5">
+      <div class="row">
+          <div class="col-md-8 col-xl-6 text-center mx-auto">
+              <h2 class="display-6 fw-bold mb-4"><span class="underline">Order Request</span>.</h2>
+              <p class="text-muted">Provide us with the details of your order request by completing the form below. Our team will promptly attend to your request.</p>
+          </div>
+      </div>
+      <div class="row d-flex justify-content-center">
+          <div class="col-md-6">
+              <div></div>
+          </div>
+      </div>
+  </div>
+
+  <div class="container-fluid">
+      <form id="OrderForm" method="POST" action="">
+        {% csrf_token %}
+          <div class="card shadow mb-3">
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-sm-12 col-md-8 col-lg-8">
+                          <div class="mb-3"><label class="form-label"><strong>Pickup</strong></label>
+                            <input class="form-control" type="text" id="id-google-address-1" value="{{name_1}}" name="pickup_address">
+                          </div>
+                          <div class="mb-3"><label class="form-label"><strong>Building/Complex, Office Number</strong></label>
+                            {{ form.pickup_spec }}
+                          </div>
+                      </div>
+                  </div>
+                  <div class="mb-3"><label class="form-label"><strong>Pickup Address Additional Notes</strong></label>
+                    {{ form.pickup_notes }}
+                  </div>
+                  <br><br><br>
+
+                  {% for item1, item2, item3, item4, item5, item6 in stop_info %}
+                    
+                    <div class="row">
+                      <div class="col-sm-12 col-md-8 col-lg-8">
+                        
+                          <div class="mb-3"><label class="form-label"><strong>Stop {{item1}}</strong></label>
+                            <input class="form-control" type="text" id="{{item2}}" value="{{item6}}" name="{{item3}}">
+                          </div>
+                          <div class="mb-3"><label class="form-label"><strong>Stop {{item1}} Building/Complex, Office Number</strong></label>
+                            <input class="form-control" type="text" id="{{item2}}" name="{{item4}}">
+                          </div>
+                      </div>
+                    </div>
+                    <div class="mb-3"><label class="form-label"><strong>Stop {{item1}} Additional Notes</strong></label>
+                      <textarea cols="40" rows="10" class="form-control" type="text" id="{{item5}}" name="{{item5}}" placeholder="Please provide us with the necessary contact information of the recipient, as well as any messages that should be conveyed to the recipient."></textarea>
+                    </div>
+                    <br><br><br>
+
+                  {% endfor %}
+
+                  <div class="row">
+                      <div class="col-sm-12 col-md-8 col-lg-8">
+                          <div class="mb-3"><label class="form-label" ><strong>DropOff Address </strong></label>
+                            <input class="form-control" type="text" id="id-google-address-2" value="{{name_2}}" name="dropoff_address">
+                          </div>
+                          <div class="mb-3"><label class="form-label"><strong>Building/Complex, Office Number</strong></label>
+                            {{ form.dropoff_spec }}
+                          </div>
+                      </div>                     
+                  </div>
+                  <div class="mb-3"><label class="form-label" ><strong>DropOff Address Additional Notes</strong></label>
+                    {{ form.dropoff_notes }}
+                  </div>
+                  
+                  <div class="col-md-8 col-xl-6 text-center mx-auto" style="margin-top: 100px;">
+                    <h2 class="display-6 fw-bold mb-4"><span class="underline">Contact Details</span>.</h2>
+                    <p class="text-muted" style="margin-top: -20px;">Provide us with your contact information to finalise your order.</p>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-8 col-lg-8">
+                        <div class="mb-3"><label class="form-label"><strong>Name of Individual/organisation requesting Delivery *</strong></label>
+                          {{ form.name }}
+                        </div>
+                        <div class="mb-3"><label class="form-label"><strong>Email *</strong></label>
+                            <p class="text-muted"><span style="color: rgb(255, 0, 0);">This email will receive payment link and delivery updates.</span></p>
+                            {{ form.email }}
+                        </div>
+                        <div class="mb-3"><label class="form-label"><strong>Contact Number *</strong></label>
+                            <p class="text-muted"><span style="color: rgb(255, 0, 0);">This contact number delivery updates.</span></p>
+                            {{ form.contact }}
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+
+                <div class="mb-3"><label class="form-label"><strong>Delivery Date & Time</strong></label>
+                  <p class="text-muted"><span style="color: rgb(255, 0, 0);">Select your preferred date of pickup below.</span></p>
+                  {{ form.delivery_date }}
+                  <br>
+                  <p class="text-muted"><span style="color: rgb(255, 0, 0);">Select your preferred time of pickup below.</span></p>
+                  {{ form.delivery_time }}
+              </div>
+              <br>
+              <br>
+
+
+              <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th colspan="2" style="text-align: center;">DELIVERY TYPE FEES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                      <td style="text-align: center;"><strong> STANDARD:  R{{Standard_Fee}}</strong></td>
+                  </tr>
+                  <tr>
+                      <td style="text-align: center;"><strong>PRIORITY:  R{{Priority_Fee}}</strong></td>
+                  </tr>
+                  <tr><td>{{ form.delivery_type }}</td></tr>  
+ 
+                </tbody>
+            </table>
+
+            <br><br>
+            <div class="col"><label class="form-label" ><strong>Protective & Confidential Flyer (R15.00/bag)</strong></label>
+              <p class="text-muted"><span style="color: rgb(255, 0, 0);">We already provide a single courier bag to fully protect your documents and keep them as confidential as possible. Should you require more please select how many you would need.</span></p>
+              {{ form.flyer }}
+            </div>
+
+
+          </div>
+      </div>
+      <input type="hidden" name="standard_fee" value="{{Standard_Fee}}">
+      <input type="hidden" name="priority_fee" value="{{Priority_Fee}}">
+      <input type="hidden" name="order_id" value="{{order_id}}">
+      <input type="hidden" name="pickup_coordinates" value="{{lat_1}}, {{long_1}}">
+      <input type="hidden" name="stop1_coordinates" value="{{lat_3}}, {{long_3}}">
+      <input type="hidden" name="stop2_coordinates" value="{{lat_4}}, {{long_4}}">
+      <input type="hidden" name="stop3_coordinates" value="{{lat_5}}, {{long_5}}">
+      <input type="hidden" name="stop4_coordinates" value="{{lat_6}}, {{long_6}}">
+      <input type="hidden" name="stop5_coordinates" value="{{lat_7}}, {{long_7}}">
+      <input type="hidden" name="stop6_coordinates" value="{{lat_8}}, {{long_8}}">
+      <input type="hidden" name="dropoff_coordinates" value="{{lat_2}}, {{long_2}}">
+          
+
+          <div class="text-end mb-3">
+            <input type="submit" value="Submit" class="btn btn-secondary">
+          </div>
+      </form>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extend_footer %}
+
+<script type="text/javascript">
+
+  var google_api_key = "{{google_api_key|safe}}";
+  var lat_1 = {{lat_1|safe}};
+  var long_1 = {{long_1|safe}};
+  var lat_2 = {{lat_2|safe}};
+  var long_2 = {{long_2|safe}};
+  var lat_3 = {{lat_3|safe}};
+  var long_3 = {{long_3|safe}};
+  var lat_4 = {{lat_4|safe}};
+  var long_4 = {{long_4|safe}};
+  var lat_5 = {{lat_5|safe}};
+  var long_5 = {{long_5|safe}};
+  var lat_6 = {{lat_6|safe}};
+  var long_6 = {{long_6|safe}};
+  var lat_7 = {{lat_7|safe}};
+  var long_7 = {{long_7|safe}};
+  var lat_8 = {{lat_8|safe}};
+  var long_8 = {{long_8|safe}};
+  var origin = "{{origin|safe}}";
+  var destination = "{{destination|safe}}";
+  var directions = {{directions|safe}};
+
+</script>
+<script src="{% static 'google_maps.js' %}"></script>
+
+
+
+{% endblock %}

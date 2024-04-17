@@ -1,0 +1,1 @@
+web gunicorn courtrun_legal_couriers.wsgi:application --log-file -
