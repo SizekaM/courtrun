@@ -25,7 +25,7 @@ EMAIL1_USE_TLS = False
 EMAIL1_USE_SSL = True
 EMAIL1_HOST = 'smtp.mailgun.org'
 EMAIL1_HOST_USER = 'contact@mg.courtrun.co.za'
-EMAIL1_HOST_PASSWORD = '3041702008b940ccfa8a915a87e5553a-30344472-c3aac5d1'
+EMAIL1_HOST_PASSWORD = 'PASSWORD'
 EMAIL1_PORT = 465
 
 
@@ -158,4 +158,4 @@ PREPEND_WWW = False
 
 django_heroku.settings(locals())
 
-GOOGLE_API_KEY = "AIzaSyA4IBw2ws3NQ-9q68yD26xqRf6zTE1mHUY"
+GOOGLE_API_KEY = "GOOGLE API KEY"
